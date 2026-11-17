@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>CanteenConnect – interactive prototype</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --blue: #0b4a9a;
+        --sky: #dce9f7;
+        --green: #2e9e5b;
+        --yellow: #f5b82e;
+        --coral: #e5575f;
+        --ink: #1f2937;
+        --bg: #f6f9fd;
+        --card: #fff;
+        --mut: #5b6678;
+        --line: #d5e0ee;
+        --page: #e7eef7;
+        --fs: 15px;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      :root.hc {
+        --blue: #062f66;
+        --green: #14703a;
+        --coral: #b3222b;
+        --mut: #1f2937;
+        --line: #1f2937;
+        --sky: #fff;
+      }
+      :root.big {
+        --fs: 18px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --page: #0e1522;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        background: var(--page);
+        font:
+          var(--fs)/1.4 Inter,
+          system-ui,
+          sans-serif;
+        color: var(--ink);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+        padding: 12px;
+      }
+      h1,
+      h2,
+      h3,
+      .pf {
+        font-family: Poppins, Inter, sans-serif;
+        margin: 0;
+      }
+      .phone {
+        width: 390px;
+        max-width: 100%;
+        height: min(820px, 100vh - 24px);
+        background: var(--bg);
+        border-radius: 28px;
+        border: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+      }
+      .top {
+        background: var(--blue);
+        color: #fff;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .top h1 {
+        font-size: 19px;
+        flex: 1;
+      }
+      .top button {
+        background: none;
+        border: 0;
+        color: #fff;
+        font-size: var(--fs);
+        cursor: pointer;
+        padding: 6px;
+      }
+      .body {
+        flex: 1;
+        overflow: auto;
+        padding: 14px 16px;
+      }
+      .nav {
+        display: flex;
+        border-top: 1px solid var(--line);
+        background: var(--card);
+      }
+      .nav button {
+        flex: 1;
+        border: 0;
+        background: none;
+        padding: 10px 0 12px;
+        font: 500 12px Inter;
+        color: var(--mut);
+        cursor: pointer;
+        min-height: 48px;
+      }
+      .nav button.on {
+        color: var(--blue);
+        font-weight: 600;
+        box-shadow: inset 0 3px var(--blue);
+      }
+      .nav b {
+        display: block;
+        font-size: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+        margin-bottom: 10px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .sp {
+        justify-content: space-between;
+      }
+      .btn {
+        border: 0;
+        border-radius: 12px;
+        background: var(--blue);
+        color: #fff;
+        font: 600 var(--fs) Poppins;
+        padding: 14px;
+        width: 100%;
+        min-height: 48px;
+        cursor: pointer;
+      }
+      .btn.sec {
+        background: var(--sky);
+        color: var(--blue);
+        border: 1px solid var(--blue);
+      }
+      .btn:disabled {
+        background: #c9d1dc;
+        color: #6b7280;
+        cursor: not-allowed;
+      }
+      .btn.red {
+        background: var(--coral);
+      }
+      .btn.grn {
+        background: var(--green);
+      }
+      .chip {
+        display: inline-flex;
+        gap: 5px;
+        align-items: center;
+        border-radius: 99px;
+        border: 1.5px solid;
+        padding: 3px 10px;
+        font: 600 12px Inter;
+        background: #fff;
+      }
+      .Plenty {
+        color: var(--green);
+        border-color: var(--green);
+      }
+      .Filling {
+        color: #8a5b00;
+        border-color: var(--yellow);
+        background: #fff6dc;
+      }
+      .Full {
+        color: var(--coral);
+        border-color: var(--coral);
+      }
+      .Unknown {
+        color: var(--mut);
+        border-color: var(--mut);
+      }
+      .tag {
+        font: 600 11px Inter;
+        border-radius: 6px;
+        padding: 2px 7px;
+        background: #e3f4ea;
+        color: #1b6b3c;
+      }
+      .tag.h {
+        background: #fff1cc;
+        color: #7a5200;
+      }
+      .stat {
+        flex: 1;
+        border-radius: 14px;
+        padding: 12px;
+        background: var(--sky);
+        border: 1px solid var(--line);
+      }
+      .stat small {
+        display: block;
+        color: var(--mut);
+      }
+      .stat b {
+        font: 600 22px Poppins;
+      }
+      .img {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        background: var(--sky);
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        flex: none;
+      }
+      .pill {
+        border: 1.5px solid var(--line);
+        background: var(--card);
+        border-radius: 99px;
+        padding: 8px 14px;
+        font: 500 var(--fs) Inter;
+        cursor: pointer;
+        min-height: 40px;
+      }
+      .pill.on {
+        background: var(--blue);
+        color: #fff;
+        border-color: var(--blue);
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        font: var(--fs) Inter;
+        margin-bottom: 10px;
+        background: #fff;
+      }
+      .stp {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin: 8px 0;
+      }
+      .stp div {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 7px 0;
+      }
+      .dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid var(--blue);
+        display: grid;
+        place-items: center;
+        font-size: 11px;
+        color: #fff;
+      }
+      .dot.d {
+        background: var(--blue);
+      }
+      .bar {
+        height: 14px;
+        border-radius: 9px;
+        background: #e5eaf2;
+        overflow: hidden;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        background: var(--yellow);
+      }
+      .toast {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: 78px;
+        background: var(--ink);
+        color: #fff;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 500;
+      }
+      .err {
+        border-color: var(--coral);
+        background: #fdecee;
+      }
+      .side {
+        width: 420px;
+        max-width: 100%;
+        height: min(820px, 100vh - 24px);
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .side .top {
+        background: var(--ink);
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        padding: 10px;
+        flex-wrap: wrap;
+        border-bottom: 1px solid var(--line);
+      }
+      .side .body {
+        background: var(--bg);
+      }
+      .sw {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 13px;
+        margin: 0 0 8px;
+      }
+      @media (max-width: 860px) {
+        .side {
+          display: none;
+        }
+        .on-staff .side {
+          display: flex;
+        }
+        .on-staff .phone {
+          display: none;
+        }
+      }
+      button:focus-visible,
+      input:focus-visible {
+        outline: 3px solid var(--yellow);
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="phone" id="app" aria-label="CanteenConnect student app"></div>
+    <div class="side" id="staff" aria-label="Staff dashboard"></div>
+    <script>
+      const MENU = [
+        { id: 1, n: "Veg thali", p: 60, e: "🍛", t: ["Fresh today"], s: 1 },
+        {
+          id: 2,
+          n: "Poha",
+          p: 30,
+          e: "🥣",
+          t: ["Fresh today", "Healthy"],
+          s: 1,
+        },
+        { id: 3, n: "Paneer roll", p: 55, e: "🌯", t: [], s: 0 },
+        { id: 4, n: "Veg sandwich", p: 45, e: "🥪", t: [], s: 1 },
+        { id: 5, n: "Idli sambar", p: 35, e: "🍚", t: ["Healthy"], s: 1 },
+        {
+          id: 6,
+          n: "Fruit bowl",
+          p: 40,
+          e: "🍎",
+          t: ["Healthy", "Fresh today"],
+          s: 1,
+        },
+        { id: 7, n: "Masala chai", p: 15, e: "☕", t: [], s: 1 },
+      ];
+      const ST = ["Placed", "Accepted", "Preparing", "Ready", "Collected"];
+      const S = {
+        scr: "signin",
+        cart: {},
+        slot: "12:20",
+        pay: "UPI",
+        ps: "idle",
+        weak: true,
+        tries: 0,
+        orders: [],
+        nid: 42,
+        f: "All",
+        q: "",
+        seat: { "Hall A": "Plenty", "Hall B": "Filling", Outdoor: "Full" },
+        tk: [],
+        iss: null,
+        tbl: "Table 14 · Hall A",
+        big: 0,
+        hc: 0,
+        tab: "Orders",
+        toast: "",
+        cur: null,
+        tkv: null,
+        lang: "English",
+        wifi: 0,
+      };
+      const $ = (s) => document.querySelector(s);
+      const total = () =>
+        Object.entries(S.cart).reduce(
+          (a, [i, q]) => a + MENU.find((m) => m.id == i).p * q,
+          0,
+        );
+      const count = () => Object.values(S.cart).reduce((a, b) => a + b, 0);
+      const active = () => S.orders.filter((o) => o.st < 4);
+      const wait = () => 4 + 2 * active().length;
+      const ic = { Plenty: "●", Filling: "◐", Full: "■", Unknown: "?" };
+      const chip = (l) =>
+        `<span class="chip ${l}">${ic[l]} ${l === "Plenty" ? "Plenty of seats" : l === "Filling" ? "Filling up" : l === "Full" ? "Full" : "Not updated"}</span>`;
+      const overall = () => {
+        const v = Object.values(S.seat);
+        return v.includes("Plenty")
+          ? v.includes("Full") && !v.includes("Filling")
+            ? "Filling"
+            : "Plenty"
+          : v.includes("Filling")
+            ? "Filling"
+            : "Full";
+      };
+      function go(s, x) {
+        S.scr = s;
+        Object.assign(S, x || {});
+        render();
+      }
+      function say(t) {
+        S.toast = t;
+        render();
+        setTimeout(() => {
+          S.toast = "";
+          render();
+        }, 2200);
+      }
+      function add(id, d) {
+        const q = (S.cart[id] || 0) + d;
+        if (q <= 0) delete S.cart[id];
+        else S.cart[id] = q;
+        render();
+      }
+      function placeOrder(mode, paid) {
+        const o = {
+          id: S.nid++,
+          items: Object.entries(S.cart).map(([i, q]) => [
+            MENU.find((m) => m.id == i).n,
+            q,
+          ]),
+          tot: total(),
+          slot: S.slot,
+          mode,
+          paid,
+          st: 0,
+        };
+        S.orders.unshift(o);
+        S.cart = {};
+        S.cur = o.id;
+        S.ps = "idle";
+        S.tries = 0;
+        go("status");
+      }
+      function doPay() {
+        S.ps = "loading";
+        render();
+        setTimeout(() => {
+          if (S.weak && !S.wifi && S.tries === 0) {
+            S.tries++;
+            S.ps = "error";
+          } else {
+            S.ps = "ok";
+            render();
+            setTimeout(() => placeOrder(S.pay, true), 700);
+            return;
+          }
+          render();
+        }, 1300);
+      }
+      function adv(id) {
+        const o = S.orders.find((o) => o.id == id);
+        if (o.st < 4) o.st++;
+        render();
+      }
+      function nextTk(id) {
+        const t = S.tk.find((t) => t.id == id),
+          L = ["Open", "Assigned", "In progress", "Resolved", "Closed"];
+        const i = L.indexOf(t.st);
+        if (i < 4) t.st = L[i + 1];
+        render();
+      }
+      function submitIssue() {
+        const id = "T-" + (100 + S.tk.length + 1);
+        S.tk.unshift({ id, tbl: S.tbl, type: S.iss, st: "Open" });
+        S.tkv = id;
+        S.iss = null;
+        go("ticket");
+      }
+
+      const wifiCard = () =>
+        `<div class="card row sp"><span>📶 <b>Canteen Wi-Fi</b><br><small>${S.wifi ? "Connected · payments steady" : "Join for steadier payments at the canteen"}</small></span><button class="pill ${S.wifi ? "on" : ""}" onclick="S.wifi=!S.wifi;S.tries=0;S.ps='idle';render()">${S.wifi ? "Connected" : "Connect"}</button></div>`;
+      const tmap = () =>
+        Object.entries(S.seat)
+          .map(([h, l]) => {
+            const t = { Plenty: 3, Filling: 8, Full: 12, Unknown: 0 }[l];
+            return `<div style="margin-top:8px"><div class="row sp"><b>${h}</b>${chip(l)}</div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:6px">${Array.from(
+              { length: 12 },
+              (_, i) => {
+                const tk = l !== "Unknown" && i < t;
+                const nm = `Table ${i + 1} · ${h}`;
+                return `<button class="pill" style="padding:6px 0;min-height:44px;font-size:12px;${tk ? "background:#E5EAF2;color:#5B6678" : "border-color:var(--green);color:var(--green)"}${S.tbl === nm ? ";outline:3px solid var(--blue)" : ""}" aria-label="${nm} ${tk ? "taken" : "free"}" onclick="S.tbl='${nm}';render()">${tk ? "✕" : "✓"} ${i + 1}</button>`;
+              },
+            ).join("")}</div></div>`;
+          })
+          .join("") +
+        `<div class="row sp" style="margin-top:10px"><small>✓ free · ✕ taken · tap a table to select it</small><button class="pill" onclick="go('report')">Report ${S.tbl}</button></div>`;
+      const hdr = (t, back) =>
+        `<div class="top">${back ? `<button aria-label="Back" onclick="go('${back}')">←</button>` : ""}<h1>${t}</h1>${S.scr !== "signin" && S.scr !== "cart" && S.scr !== "menu" ? `<button aria-label="Cart" onclick="go('cart')">🛒${count() ? " " + count() : ""}</button>` : ""}</div>`;
+      const nav = () => {
+        const T = [
+          ["home", "⌂", "Home"],
+          ["menu", "☰", "Menu"],
+          ["orders", "🧾", "Orders"],
+          ["canteen", "🪑", "Status"],
+          ["me", "☺", "Me"],
+        ];
+        return `<nav class="nav" aria-label="Main">${T.map(([k, i, l]) => `<button class="${S.scr === k ? "on" : ""}" onclick="go('${k}')"><b>${i}</b>${l}</button>`).join("")}</nav>`;
+      };
+
+      const V = {
+        signin:
+          () => `<div class="top"><h1>CanteenConnect</h1></div><div class="body"><div style="text-align:center;padding:36px 0 18px"><div class="img" style="margin:0 auto 14px;width:84px;height:84px;font-size:44px;background:var(--blue)">🍽</div><h2 style="font-size:24px">Know before you go</h2><p style="color:var(--mut)">See wait time and seats, order and pay before you reach the canteen.</p></div>
+<input type="text" id="sid" placeholder="College ID or phone number" aria-label="College ID or phone number"><button class="btn" onclick="go('home')">Continue</button><p style="text-align:center;color:var(--mut);font-size:13px">Counter staff? <a href="#" onclick="document.body.classList.add('on-staff');return false">Open staff dashboard</a></p></div>`,
+        home: () => {
+          const a = active()[0];
+          return `${hdr("CanteenConnect")}<div class="body"><div class="row"><div class="stat"><small>Wait now</small><b>~${wait()} min</b></div><div class="stat"><small>Seats</small><div style="margin-top:4px">${chip(overall())}</div></div></div>
+<div class="card" style="margin-top:10px;background:var(--sky)"><b class="pf">Break is short?</b><div style="margin:2px 0 10px">${wait() <= 6 ? "Short wait. Go now, or pre-order to skip the counter." : "Busy. Pre-order a pickup slot and walk over when it’s ready."}</div><button class="btn" onclick="go('menu')">Pre-order now</button></div>
+${a ? `<div class="card row sp" onclick="go('status',{cur:${a.id}})" style="cursor:pointer;border-color:var(--blue)"><div><b>Order #${a.id}</b><div style="color:var(--mut)">${ST[a.st]} · pickup ${a.slot}</div></div><span class="chip Filling">View</span></div>` : ""}
+<h3 style="font-size:16px;margin:14px 0 8px">Today’s menu</h3><div class="row" style="flex-wrap:wrap">${MENU.filter(
+            (m) => m.s,
+          )
+            .slice(0, 4)
+            .map(
+              (m) =>
+                `<div class="card" style="flex:1 1 40%;margin:0"><div class="img" style="width:100%;height:60px">${m.e}</div><b>${m.n}</b><div style="color:var(--mut)">₹${m.p}</div></div>`,
+            )
+            .join("")}</div>
+<div class="card row sp" style="margin-top:12px"><span>Hygiene audit today 9:30 am: <b style="color:var(--green)">Passed</b></span></div></div>${nav()}`;
+        },
+        menu: () => {
+          const L = MENU.filter(
+            (m) =>
+              (S.f === "All" || m.t.includes(S.f)) &&
+              m.n.toLowerCase().includes(S.q.toLowerCase()),
+          );
+          return `${hdr("Menu")}<div class="body"><input type="text" placeholder="Search food" aria-label="Search food" value="${S.q}" oninput="S.q=this.value;render();const e=document.querySelector('[aria-label=\\'Search food\\']');e.focus();e.setSelectionRange(99,99)">
+<div class="row" style="margin-bottom:10px;overflow:auto">${["All", "Fresh today", "Healthy"].map((f) => `<button class="pill ${S.f === f ? "on" : ""}" onclick="S.f='${f}';render()">${f}</button>`).join("")}</div>
+${L.length ? L.map((m) => `<div class="card row"><div class="img">${m.e}</div><div style="flex:1"><b>${m.n}</b> <span style="color:var(--mut)">₹${m.p}</span><div>${m.t.map((t) => `<span class="tag ${t === "Healthy" ? "h" : ""}">${t}</span> `).join("")}</div></div>${m.s ? (S.cart[m.id] ? `<div class="row"><button class="pill" aria-label="Remove one" onclick="add(${m.id},-1)">−</button><b>${S.cart[m.id]}</b><button class="pill" aria-label="Add one" onclick="add(${m.id},1)">+</button></div>` : `<button class="pill on" onclick="add(${m.id},1)">Add</button>`) : '<span class="chip Unknown">Sold out</span>'}</div>`).join("") : '<div class="card" style="text-align:center">Nothing matches. Clear the search or filter.</div>'}
+${count() ? `<button class="btn grn" style="position:sticky;bottom:0" onclick="go('cart')">View cart · ${count()} items · ₹${total()}</button>` : ""}</div>${nav()}`;
+        },
+        cart: () => {
+          const e = S.ps === "error",
+            c = count();
+          const lab = {
+            idle: `Pay ₹${total()}`,
+            loading: "Processing…",
+            error: "Retry payment",
+            ok: "Paid ✓",
+          }[S.ps];
+          return `${hdr("Your order", "menu")}<div class="body">${
+            c
+              ? `<div class="card">${Object.entries(S.cart)
+                  .map(([i, q]) => {
+                    const m = MENU.find((m) => m.id == i);
+                    return `<div class="row sp" style="padding:4px 0"><span>${m.n} ×${q}</span><b>₹${m.p * q}</b></div>`;
+                  })
+                  .join(
+                    "",
+                  )}<hr style="border:0;border-top:1px solid var(--line)"><div class="row sp"><b>Total</b><b>₹${total()}</b></div></div>
+<h3 style="font-size:16px;margin:12px 0 8px">Pickup slot</h3><div class="row">${["12:10", "12:20", "12:30"].map((s) => `<button class="pill ${S.slot === s ? "on" : ""}" onclick="S.slot='${s}';render()">${s}</button>`).join("")}</div>
+<h3 style="font-size:16px;margin:14px 0 8px">Pay with</h3>${["UPI", "Wallet", "Pay at counter"].map((p) => `<label class="card row" style="cursor:pointer;margin-bottom:6px"><input type="radio" name="pm" ${S.pay === p ? "checked" : ""} onchange="S.pay='${p}';S.ps='idle';render()"> ${p}</label>`).join("")}
+${e ? `<div class="card err"><b>Payment didn’t go through.</b><div>The network dropped. Retry now, or pay at the counter when you collect.</div></div>` : ""}
+${wifiCard()}<label class="sw"><input type="checkbox" ${S.weak ? "checked" : ""} onchange="S.weak=this.checked;S.tries=0;S.ps='idle'"> Prototype: simulate weak network (first payment fails)</label>
+${S.pay === "Pay at counter" ? `<button class="btn" onclick="placeOrder('Counter',false)">Place order · pay at counter</button>` : `<button class="btn ${e ? "red" : S.ps === "ok" ? "grn" : ""}" ${S.ps === "loading" || S.ps === "ok" ? "disabled" : ""} onclick="doPay()">${lab}</button>${e ? `<button class="btn sec" style="margin-top:8px" onclick="S.pay='Pay at counter';S.ps='idle';render()">Pay at counter instead</button>` : ""}`}`
+              : `<div class="card" style="text-align:center;padding:30px"><div style="font-size:40px">🛒</div><b>Your cart is empty</b><p style="color:var(--mut)">Pick something from today’s menu.</p><button class="btn" onclick="go('menu')">Browse menu</button></div>`
+          }</div>`;
+        },
+        status: () => {
+          const o = S.orders.find((o) => o.id === S.cur) || S.orders[0];
+          if (!o)
+            return `${hdr("Order status")}<div class="body"><div class="card" style="text-align:center;padding:30px"><b>No active order</b><p style="color:var(--mut)">Place an order to track it here.</p><button class="btn" onclick="go('menu')">Order food</button></div></div>${nav()}`;
+          return `${hdr("Order #" + o.id)}<div class="body"><div class="card"><div class="stp" role="list">${ST.slice(
+            0,
+            4,
+          )
+            .map(
+              (s, i) =>
+                `<div role="listitem"><span class="dot ${o.st >= i ? "d" : ""}">${o.st >= i ? "✓" : ""}</span><b style="font-weight:${o.st === i ? 700 : 400}">${s}</b></div>`,
+            )
+            .join("")}</div></div>
+${o.st < 3 ? `<div class="card" style="background:#FFF6DC;border-color:var(--yellow)"><b>Ready in about ${Math.max(2, (3 - o.st) * 2)} min</b><div>Pickup slot ${o.slot}</div></div>` : o.st === 3 ? `<div class="card" style="background:#E3F4EA;border-color:var(--green)"><b>Your order is ready. Show #${o.id} at the counter.</b>${!o.paid ? `<div>Pay ₹${o.tot} at the counter.</div>` : ""}</div>` : `<div class="card"><b>Collected. Enjoy your meal.</b></div>`}
+<div class="card row sp"><span>Seats now</span>${chip(overall())}</div>
+${o.st === 4 ? `<div class="card"><b>Rate this meal</b><div class="row" style="margin-top:6px">${[1, 2, 3, 4, 5].map((n) => `<button class="pill" aria-label="${n} stars" onclick="say('Thanks for rating')">${n}★</button>`).join("")}</div></div>` : ""}
+<button class="btn sec" onclick="go('canteen')">Check seats and hygiene</button></div>${nav()}`;
+        },
+        orders: () =>
+          `${hdr("Orders")}<div class="body">${S.orders.length ? S.orders.map((o) => `<div class="card"><div class="row sp"><b>Order #${o.id}</b><span class="chip ${o.st === 3 ? "Plenty" : o.st === 4 ? "Unknown" : "Filling"}">${ST[o.st]}</span></div><div style="color:var(--mut)">${o.items.map((i) => i[0] + " ×" + i[1]).join(", ")} · ₹${o.tot}</div><div class="row" style="margin-top:8px"><button class="pill" onclick="go('status',{cur:${o.id}})">Track</button><button class="pill" onclick="${o.items.map((i) => `add(${MENU.find((m) => m.n === i[0]).id},${i[1]});`).join("")}go('cart')">Re-order</button></div></div>`).join("") : `<div class="card" style="text-align:center;padding:30px"><b>No orders yet</b><p style="color:var(--mut)">Your orders will show up here.</p><button class="btn" onclick="go('menu')">Order food</button></div>`}</div>${nav()}`,
+        canteen:
+          () => `${hdr("Canteen status")}<div class="body"><div class="card"><div class="row sp"><b>Live seats</b>${chip(overall())}</div><div class="bar" style="margin:10px 0"><i style="width:${{ Plenty: 30, Filling: 65, Full: 95, Unknown: 0 }[overall()]}%"></i></div>${tmap()}</div>
+<div class="card"><b>Busy times today</b><div class="row" style="align-items:flex-end;height:90px;margin-top:8px">${[
+            ["11", 30],
+            ["12", 60],
+            ["1", 95],
+            ["2", 100],
+            ["3", 50],
+            ["4", 25],
+          ]
+            .map(
+              ([t, h]) =>
+                `<div style="flex:1;text-align:center;font-size:12px"><div style="height:${h * 0.7}px;background:${h > 80 ? "var(--coral)" : "var(--blue)"};border-radius:6px 6px 0 0"></div>${t}</div>`,
+            )
+            .join(
+              "",
+            )}</div><small style="color:var(--mut)">Illustrative pattern for the prototype</small></div>
+<div class="card"><div class="row sp"><b>Hygiene audit · today 9:30 am</b><b style="color:var(--green)">✓ Passed</b></div>${["Tables wiped", "Wash area clean", "AC working", "Food stored correctly"].map((x) => `<div>✓ ${x}</div>`).join("")}</div>${wifiCard()}<button class="btn sec" onclick="go('report')">Report a problem</button></div>${nav()}`,
+        report:
+          () => `${hdr("Report an issue", "canteen")}<div class="body"><div class="card" style="background:var(--sky)"><small>Scanned from QR</small><div><b>${S.tbl}</b></div></div><h3 style="font-size:16px;margin:10px 0 8px">What’s wrong?</h3><div class="row" style="flex-wrap:wrap">${["Dirty table", "AC not working", "Wash area", "Other"].map((t) => `<button class="pill ${S.iss === t ? "on" : ""}" onclick="S.iss='${t}';render()">${t}</button>`).join("")}</div>
+<div class="card row" style="margin-top:12px;border-style:dashed"><div class="img">📷</div><span>Add photo (optional)</span></div><input type="text" placeholder="Add a note (optional)" aria-label="Note"><button class="btn" ${S.iss ? "" : "disabled"} onclick="submitIssue()">Send report</button>${S.iss ? "" : '<p style="color:var(--mut);text-align:center">Choose what’s wrong to send.</p>'}</div>`,
+        ticket: () => {
+          const t = S.tk.find((t) => t.id === S.tkv);
+          const L = ["Open", "Assigned", "In progress", "Resolved", "Closed"];
+          return `${hdr("Ticket " + t.id, "canteen")}<div class="body"><div class="card"><b>${t.type}</b><div style="color:var(--mut)">${t.tbl}</div><div class="stp">${L.map((s, i) => `<div><span class="dot ${L.indexOf(t.st) >= i ? "d" : ""}">${L.indexOf(t.st) >= i ? "✓" : ""}</span>${s}</div>`).join("")}</div></div>${t.esc ? '<div class="card err"><b>Escalated to the facility team.</b></div>' : ""}<p style="color:var(--mut)">We’ll alert you when the status changes. Staff can move it forward from the dashboard.</p><button class="btn" onclick="go('canteen')">Done</button></div>`;
+        },
+        me: () => `${hdr("Me")}<div class="body"><div class="card row"><div class="img">☺</div><div><b>Student</b><div style="color:var(--mut)">College ID linked</div></div></div>
+<h3 style="font-size:16px;margin:10px 0 8px">Accessibility</h3><label class="card row sp"><span>Larger text</span><input type="checkbox" ${S.big ? "checked" : ""} onchange="S.big=this.checked;document.documentElement.classList.toggle('big',S.big);render()"></label>
+<label class="card row sp"><span>High contrast</span><input type="checkbox" ${S.hc ? "checked" : ""} onchange="S.hc=this.checked;document.documentElement.classList.toggle('hc',S.hc);render()"></label>
+<div class="card row sp"><span>Language</span><select aria-label="Language" onchange="S.lang=this.value"><option>English</option><option>हिन्दी</option></select></div>
+<p style="color:var(--mut);font-size:13px">Every status also shows text and an icon, and the counter always accepts orders without a phone.</p>
+<button class="btn sec" onclick="go('report')" style="margin-bottom:8px">Report an issue</button><button class="btn sec" onclick="document.body.classList.add('on-staff');render()">Open staff dashboard</button></div>${nav()}`,
+      };
+
+      function staff() {
+        const T = ["Orders", "Menu & stock", "Seats", "Tickets", "Audit"];
+        const b = {
+          Orders: () =>
+            S.orders.length
+              ? S.orders
+                  .map(
+                    (o) =>
+                      `<div class="card"><div class="row sp"><b>#${o.id} · ${o.slot}</b><span class="chip ${o.st === 3 ? "Plenty" : "Filling"}">${ST[o.st]}</span></div><div>${o.items.map((i) => i[0] + " ×" + i[1]).join(", ")}</div><div style="color:var(--mut)">${o.paid ? "Paid " + o.mode : "Collect ₹" + o.tot + " at counter"}</div>${o.st < 4 ? `<button class="btn sec" style="margin-top:8px" onclick="adv(${o.id})">Mark ${ST[o.st + 1].toLowerCase()}</button>` : ""}</div>`,
+                  )
+                  .join("")
+              : '<div class="card">No orders yet. Place one in the student app.</div>',
+          "Menu & stock": () =>
+            MENU.map(
+              (m) =>
+                `<label class="card row sp"><span>${m.e} ${m.n}</span><span class="row">${m.s ? "In stock" : "Sold out"}<input type="checkbox" ${m.s ? "checked" : ""} aria-label="${m.n} in stock" onchange="MENU.find(x=>x.id==${m.id}).s=this.checked?1:0;render()"></span></label>`,
+            ).join(""),
+          Seats: () =>
+            Object.keys(S.seat)
+              .map(
+                (h) =>
+                  `<div class="card"><b>${h}</b><div class="row" style="margin-top:6px;flex-wrap:wrap">${["Plenty", "Filling", "Full", "Unknown"].map((l) => `<button class="pill ${S.seat[h] === l ? "on" : ""}" onclick="S.seat['${h}']='${l}';render()">${l}</button>`).join("")}</div></div>`,
+              )
+              .join("") +
+            "<small>Seats show “Not updated” to students if not refreshed for 15 min (proposed).</small>",
+          Tickets: () =>
+            S.tk.length
+              ? S.tk
+                  .map(
+                    (t) =>
+                      `<div class="card"><div class="row sp"><b>${t.id} · ${t.type}</b><span class="chip Filling">${t.st}</span></div><div style="color:var(--mut)">${t.tbl}${t.esc ? ' · <b style="color:var(--coral)">Escalated to facility team</b>' : ""}</div>${t.st !== "Closed" && !t.esc ? `<button class="btn red" style="margin:8px 0 0" onclick="S.tk.find(x=>x.id=='${t.id}').esc=1;render()">Escalate to facility team</button>` : ""}${t.st !== "Closed" ? `<button class="btn sec" style="margin-top:8px" onclick="nextTk('${t.id}')">Move to next status</button>` : ""}</div>`,
+                  )
+                  .join("")
+              : '<div class="card">No tickets. Reports from table QR codes appear here.</div>',
+          Audit: () =>
+            `<div class="card"><b>Daily hygiene checklist</b>${["Tables wiped", "Wash area clean", "AC working", "Food stored correctly"].map((x) => `<label class="row" style="padding:6px 0"><input type="checkbox" checked> ${x}</label>`).join("")}<button class="btn grn" style="margin-top:8px" onclick="say('Audit badge published')">Publish today’s badge</button></div>`,
+        };
+        return `<div class="top"><h1>Staff dashboard</h1><button onclick="document.body.classList.remove('on-staff')">Student app</button></div><div class="tabs">${T.map((t) => `<button class="pill ${S.tab === t ? "on" : ""}" onclick="S.tab='${t}';render()">${t}</button>`).join("")}</div><div class="body">${b[S.tab]()}</div>`;
+      }
+
+      function render() {
+        const a = document.activeElement && document.activeElement.id;
+        $("#app").innerHTML =
+          V[S.scr]() +
+          (S.toast ? `<div class="toast" role="status">${S.toast}</div>` : "");
+        $("#staff").innerHTML = staff();
+      }
+      render();
+    </script>
+  </body>
+</html>
